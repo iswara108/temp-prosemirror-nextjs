@@ -1,15 +1,15 @@
-import "../styles/globals.css";
-import App from "next/app";
+import '../styles/globals.css'
+import App from 'next/app'
 
 class MyApp extends App {
   constructor(props) {
-    super(props);
+    super(props)
   }
 
   render() {
-    const { Component, pageProps } = this.props;
+    const { Component, pageProps } = this.props
 
-    return <Component {...pageProps} />;
+    return <Component {...pageProps} />
   }
 }
-export default MyApp;
+export default MyApp

@@ -1,10 +1,10 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState } from 'react'
 
-import styled from "styled-components";
+import styled from 'styled-components'
 
-import Prosemirror from "../components/Editor/Prosemirror";
+import Prosemirror from '../components/Editor/Prosemirror'
 
-import { ContainerLayout, Header, Content } from "../components/Container";
+import { ContainerLayout, Header, Content } from '../components/Container'
 
 // Thank you @iswara108 ,  There are few set of features that I want to implement.
 // 1. Editor has to be a react component
@@ -21,7 +21,7 @@ const ImageUploadWrapper = styled.div`
   & > input {
     display: none;
   }
-`;
+`
 
 const Choice = styled.div`
   display: flex;
@@ -37,7 +37,7 @@ const Choice = styled.div`
     display: none;
     width: 0;
   }
-`;
+`
 
 const HeadingInput = styled.input`
   display: block;
@@ -51,14 +51,14 @@ const HeadingInput = styled.input`
   &:focus {
     outline: none;
   }
-`;
+`
 
 const EditorPage = () => {
-  const imageUploadRef = useRef();
-  const prosemirrorRef = useRef();
+  const imageUploadRef = useRef()
+  const prosemirrorRef = useRef()
 
-  const [EditorContent, setEditorContent] = useState();
-  const [otherState, setOtherState] = useState("hello other state");
+  const [EditorContent, setEditorContent] = useState()
+  const [otherState, setOtherState] = useState('hello other state')
 
   const UploadChoice = ({
     name,
@@ -71,7 +71,7 @@ const EditorPage = () => {
     return (
       <Choice>
         <label htmlFor={name}>
-          <img src={source} style={{ width: "30px" }} />
+          <img src={source} style={{ width: '30px' }} />
         </label>
         <input
           id={name}
@@ -81,8 +81,8 @@ const EditorPage = () => {
           onClick={handleClick}
         />
       </Choice>
-    );
-  };
+    )
+  }
 
   return (
     <ContainerLayout>
@@ -92,14 +92,14 @@ const EditorPage = () => {
           <UploadChoice
             name="imageInput"
             source={
-              "https://winaero.com/blog/wp-content/uploads/2019/11/Photos-new-icon.png"
+              'https://winaero.com/blog/wp-content/uploads/2019/11/Photos-new-icon.png'
             }
             type="file"
-            handleChange={(e) => {
-              prosemirrorRef.current.imageUploadChange(e);
+            handleChange={e => {
+              prosemirrorRef.current.imageUploadChange(e)
             }}
-            onClick={(e) => {
-              prosemirrorRef.current.imageUploadClick;
+            onClick={e => {
+              prosemirrorRef.current.imageUploadClick
             }}
             input
           />
@@ -107,10 +107,10 @@ const EditorPage = () => {
 
         <HeadingInput placeholder="Add a title" type="text" />
 
-        <Prosemirror ref={prosemirrorRef} setContent={setEditorContent}  />
+        <Prosemirror ref={prosemirrorRef} setContent={setEditorContent} />
       </Content>
     </ContainerLayout>
-  );
-};
+  )
+}
 
-export default EditorPage;
+export default EditorPage
