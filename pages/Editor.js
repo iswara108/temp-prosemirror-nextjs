@@ -58,7 +58,6 @@ const EditorPage = () => {
   const prosemirrorRef = useRef()
 
   const [EditorContent, setEditorContent] = useState()
-  const [otherState, setOtherState] = useState('hello other state')
 
   const UploadChoice = ({
     name,
@@ -108,6 +107,13 @@ const EditorPage = () => {
         <HeadingInput placeholder="Add a title" type="text" />
 
         <Prosemirror ref={prosemirrorRef} setContent={setEditorContent} />
+        <button
+          onClick={() => {
+            window.editorContent = EditorContent
+          }}
+        >
+          Place state in global variable
+        </button>
       </Content>
     </ContainerLayout>
   )
