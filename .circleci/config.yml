@@ -4,14 +4,10 @@ jobs:
   # seed retreat guru with fixture data
   test-ui:
     docker:
-      - { image: cypress/base }
+      - image: circleci/node:12.9.1-browsers
     steps:
       # get the new version
       - checkout
-
-      # install nodejs with yarn
-      - node/install:
-          install-yarn: true
 
       # copy dependencies from cache if available
       - restore_cache:
@@ -19,8 +15,7 @@ jobs:
             - node-modules-{{ checksum "yarn.lock"}}
 
       # install packages with yarn
-      - node/install-packages:
-          pkg-manager: yarn
+      - run: yarn install
 
       # save dependencies to cache
       - save_cache:
