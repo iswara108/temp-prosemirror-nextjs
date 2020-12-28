@@ -1,0 +1,55 @@
+version: 2.1
+orbs: { cypress: cypress-io/cypress@1 }
+jobs:
+  # seed retreat guru with fixture data
+  test-ui:
+    docker:
+      - { image: cypress/base }
+    steps:
+      # get the new version
+      - checkout
+
+      # install nodejs with yarn
+      - node/install:
+          install-yarn: true
+
+      # copy dependencies from cache if available
+      - restore_cache:
+          keys:
+            - node-modules-{{ checksum "yarn.lock"}}
+
+      # install packages with yarn
+      - node/install-packages:
+          pkg-manager: yarn
+
+      # save dependencies to cache
+      - save_cache:
+          key: node-modules-{{ checksum "yarn.lock"}}
+          paths:
+            - node_modules
+
+      - run:
+          name: build nextjs server
+          command: yarn build
+
+      - run:
+          name: start nextjs server
+          command: yarn start
+          background: true
+
+      # test
+      - run:
+          name: Test
+          command: yarn test
+
+      - store_test_results:
+          path: test-results
+
+      - store_artifacts:
+          path: test-results
+
+workflows:
+  version: 2
+  node-tests:
+    jobs:
+      - test-ui
