@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef } from 'react'
 import styled from 'styled-components'
 import Prosemirror from '../components/Editor/Prosemirror'
 import { ContainerLayout, Header, Content } from '../components/Container'
@@ -67,7 +67,7 @@ const UploadChoice = ({ name, source, type, handleChange, handleClick }) => {
 const EditorPage = () => {
   const prosemirrorRef = useRef()
 
-  const [EditorContent, setEditorContent] = useState()
+  const onUpdate = () => console.log('updated')
 
   React.useEffect(() => {
     if (prosemirrorRef.current?.view()) {
@@ -99,10 +99,10 @@ const EditorPage = () => {
 
         <HeadingInput placeholder="Add a title" type="text" />
 
-        <Prosemirror ref={prosemirrorRef} setContent={setEditorContent} />
+        <Prosemirror ref={prosemirrorRef} updateEvent={onUpdate} />
         <button
           onClick={() => {
-            window.editorContent = EditorContent
+            window.editorContent = prosemirrorRef.current.view()?.dom
           }}
         >
           Place state in global variable

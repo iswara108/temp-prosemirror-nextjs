@@ -6,7 +6,7 @@ import React, {
 } from 'react'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
-import { DOMParser, DOMSerializer } from 'prosemirror-model'
+import { DOMParser } from 'prosemirror-model'
 import { exampleSetup } from 'prosemirror-example-setup'
 import { contentUpdatePlugin } from './contentUpdatePlugin'
 import { FootnoteView } from './footnodeView'
@@ -17,27 +17,17 @@ import { mySchema } from './mySchema'
 /* eslint-disable react/prop-types */
 const Prosemirror = forwardRef((props, ref) => {
   const editorRef = useRef()
-  const view = useRef(null)
+  const viewRef = useRef(null)
   const contentRef = useRef()
-
-  const updateObj = {
-    update(newState) {
-      const fragment = DOMSerializer.fromSchema(mySchema).serializeFragment(
-        newState.doc.content
-      )
-      props.setContent(fragment)
-      console.log(fragment)
-    }
-  }
 
   useEffect(() => {
     // initial render
-    view.current = new EditorView(editorRef.current, {
+    viewRef.current = new EditorView(editorRef.current, {
       state: EditorState.create({
         doc: DOMParser.fromSchema(mySchema).parse(contentRef.current),
         plugins: exampleSetup({ schema: mySchema }).concat([
           placeholderPlugin,
-          contentUpdatePlugin(updateObj)
+          contentUpdatePlugin(props.updateEvent)
         ])
       }),
       nodeViews: {
@@ -47,24 +37,24 @@ const Prosemirror = forwardRef((props, ref) => {
       }
     })
 
-    console.log(JSON.stringify(view.current.state.doc.toJSON()))
-    // return () => view.current.destroy();
-  }, [updateObj])
+    console.log(JSON.stringify(viewRef.current.state.doc.toJSON()))
+    return () => viewRef.current.destroy()
+  }, [])
 
   useImperativeHandle(ref, () => ({
     imageUploadChange: e => {
       console.log('change')
       if (
-        view.current.state.selection.$from.parent.inlineContent &&
+        viewRef.current.state.selection.$from.parent.inlineContent &&
         e.target.files.length
       )
-        startImageUpload(view.current, e.target.files[0])
-      view.current.focus()
+        startImageUpload(viewRef.current, e.target.files[0])
+      viewRef.current.focus()
     },
     imageUploadClick: e => {
       e.target.value = ''
     },
-    view: () => view.current
+    view: () => viewRef.current
   }))
 
   return (
