@@ -4,7 +4,7 @@ jobs:
   # seed retreat guru with fixture data
   test-ui:
     docker:
-      - image: circleci/node:12.9.1-browsers
+      - image: cypress/base:10
     steps:
       # get the new version
       - checkout
@@ -15,13 +15,14 @@ jobs:
             - node-modules-{{ checksum "yarn.lock"}}
 
       # install packages with yarn
-      - run: yarn install
+      - run: yarn install --frozen-lockfile
 
       # save dependencies to cache
       - save_cache:
           key: node-modules-{{ checksum "yarn.lock"}}
           paths:
-            - node_modules
+            - ~/node_modules
+            - ~/.cache
 
       - run:
           name: build nextjs server
