@@ -6,158 +6,14 @@ import React, {
 } from 'react'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 import { Schema, DOMParser, DOMSerializer } from 'prosemirror-model'
-import {
-  EditorState,
-  NodeSelection,
-  PluginKey,
-  Plugin
-} from 'prosemirror-state'
+import { EditorState, Plugin } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import { schema, nodes } from 'prosemirror-schema-basic'
 import { exampleSetup } from 'prosemirror-example-setup'
 import applyDevTools from 'prosemirror-dev-tools'
-
-function contentUpdatePlugin(callbackObj) {
-  return new Plugin({
-    key: new PluginKey('Content Update Hook Plugin'),
-    view: () => ({
-      update: (view, prevState) => {
-        if (!prevState.doc.eq(view.state.doc)) {
-          callbackObj.update(view.state)
-        }
-      }
-    })
-  })
-}
-
-const resizableImage = {
-  inline: true,
-  attrs: {
-    src: {},
-    width: { default: '5em' },
-    alt: { default: null },
-    title: { default: null },
-    alignment: { default: 'center' }
-  },
-  group: 'inline',
-  draggable: true,
-  parseDOM: [
-    {
-      priority: 51, // must be higher than the default image spec
-      tag: 'img[src][width]',
-      getAttrs(dom) {
-        return {
-          src: dom.getAttribute('src'),
-          title: dom.getAttribute('title'),
-          alt: dom.getAttribute('alt'),
-          width: dom.getAttribute('width'),
-          alignment:
-            dom.getAttribute('class') === 'center'
-              ? 'center'
-              : dom.getAttribute('class') === 'right'
-              ? 'right'
-              : 'left'
-        }
-      }
-    }
-  ],
-  // TODO if we don't define toDom, something weird happens: dragging the image will not move it but clone it. Why?
-  toDOM(node) {
-    const attrs = { style: `width: ${node.attrs.width}` }
-    return ['img', { ...node.attrs, ...attrs }]
-  }
-}
-
-function getFontSize(element) {
-  return parseFloat(getComputedStyle(element).fontSize)
-}
-
-class FootnoteView {
-  constructor(node, view, getPos) {
-    const outer = document.createElement('div')
-    outer.style.position = 'relative'
-    outer.style.width = node.attrs.width
-    //outer.style.border = "1px solid blue"
-    outer.style.display = 'block'
-    //outer.style.paddingRight = "0.25em"
-    outer.style.lineHeight = '0' // necessary so the bottom right arrow is aligned nicely
-    outer.style.marginLeft = 'auto'
-    outer.style.marginRight = 'auto'
-    const img = document.createElement('img')
-    img.setAttribute('src', node.attrs.src)
-    img.style.width = '100%'
-    //img.style.border = "1px solid red"
-
-    const handle = document.createElement('span')
-    handle.style.position = 'absolute'
-    handle.style.bottom = '0px'
-    handle.style.right = '0px'
-    handle.style.width = '10px'
-    handle.style.height = '10px'
-    handle.style.border = '3px solid black'
-    handle.style.borderTop = 'none'
-    handle.style.borderLeft = 'none'
-    handle.style.display = 'none'
-    handle.style.cursor = 'nwse-resize'
-
-    handle.onmousedown = function (e) {
-      e.preventDefault()
-
-      const startX = e.pageX
-
-      const fontSize = getFontSize(outer)
-
-      const startWidth = parseFloat(node.attrs.width.match(/(.+)em/)[1])
-
-      const onMouseMove = e => {
-        const currentX = e.pageX
-
-        const diffInPx = currentX - startX
-        const diffInEm = diffInPx / fontSize
-
-        outer.style.width = `${startWidth + diffInEm}em`
-      }
-
-      const onMouseUp = e => {
-        e.preventDefault()
-
-        document.removeEventListener('mousemove', onMouseMove)
-        document.removeEventListener('mouseup', onMouseUp)
-        let saveThisPos = getPos()
-        let transaction = view.state.tr.setNodeMarkup(getPos(), null, {
-          src: node.attrs.src,
-          width: outer.style.width
-        })
-        let resolvedPos = transaction.doc.resolve(saveThisPos)
-        let nodeSelection = new NodeSelection(resolvedPos)
-        transaction = transaction.setSelection(nodeSelection)
-        view.dispatch(transaction)
-      }
-
-      document.addEventListener('mousemove', onMouseMove)
-      document.addEventListener('mouseup', onMouseUp)
-    }
-
-    outer.appendChild(handle)
-    outer.appendChild(img)
-
-    this.dom = outer
-    this.img = img
-    this.handle = handle
-  }
-
-  selectNode() {
-    this.img.classList.add('ProseMirror-selectednode')
-
-    this.handle.style.display = ''
-  }
-
-  deselectNode() {
-    this.img.classList.remove('ProseMirror-selectednode')
-
-    this.handle.style.display = 'none'
-  }
-}
+import { contentUpdatePlugin } from './contentUpdatePlugin'
+import { resizableImageNodeSpec } from './resizableImageNodeSpec'
+import { FootnoteView } from './footnodeView'
 
 let placeholderPlugin = new Plugin({
   state: {
@@ -197,7 +53,7 @@ function findPlaceholder(state, id) {
 }
 
 const mySchema = new Schema({
-  nodes: { ...nodes, resizableImage },
+  nodes: { ...nodes, resizableImage: resizableImageNodeSpec },
   marks: schema.spec.marks
 })
 
