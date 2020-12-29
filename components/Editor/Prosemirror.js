@@ -8,7 +8,6 @@ import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import { DOMParser, DOMSerializer } from 'prosemirror-model'
 import { exampleSetup } from 'prosemirror-example-setup'
-import applyDevTools from 'prosemirror-dev-tools'
 import { contentUpdatePlugin } from './contentUpdatePlugin'
 import { FootnoteView } from './footnodeView'
 import { placeholderPlugin } from './placeholderPlugin'
@@ -48,7 +47,6 @@ const Prosemirror = forwardRef((props, ref) => {
       }
     })
 
-    applyDevTools(view.current)
     console.log(JSON.stringify(view.current.state.doc.toJSON()))
     // return () => view.current.destroy();
   }, [updateObj])
@@ -65,7 +63,8 @@ const Prosemirror = forwardRef((props, ref) => {
     },
     imageUploadClick: e => {
       e.target.value = ''
-    }
+    },
+    view: () => view.current
   }))
 
   return (

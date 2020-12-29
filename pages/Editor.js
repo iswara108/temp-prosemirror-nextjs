@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react'
 import styled from 'styled-components'
 import Prosemirror from '../components/Editor/Prosemirror'
 import { ContainerLayout, Header, Content } from '../components/Container'
+import applyDevTools from 'prosemirror-dev-tools'
 
 const ImageUploadWrapper = styled.div`
   display: grid;
@@ -67,6 +68,13 @@ const EditorPage = () => {
   const prosemirrorRef = useRef()
 
   const [EditorContent, setEditorContent] = useState()
+
+  React.useEffect(() => {
+    if (prosemirrorRef.current?.view()) {
+      console.log('applying devtools', prosemirrorRef.current.view())
+      applyDevTools(prosemirrorRef.current.view())
+    }
+  }, [prosemirrorRef.current?.view()])
 
   return (
     <ContainerLayout>
