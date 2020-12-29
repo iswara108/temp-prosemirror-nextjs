@@ -103,6 +103,7 @@ const EditorPage = () => {
         <button
           onClick={() => {
             window.editorContent = prosemirrorRef.current.view()?.dom
+            console.log(window.editorContent)
           }}
         >
           Place state in global variable
