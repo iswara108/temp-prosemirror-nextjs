@@ -20,21 +20,17 @@ const Prosemirror = forwardRef((props, ref) => {
   const editorRef = useRef()
   const view = useRef(null)
   const contentRef = useRef()
-  // const imageUploadRef = useRef()
 
   const updateObj = {
     update(newState) {
-      // const div = document.createElement('div')
       const fragment = DOMSerializer.fromSchema(mySchema).serializeFragment(
         newState.doc.content
       )
       props.setContent(fragment)
       console.log(fragment)
-
-      // div.appendChild(fragment)
-      // console.log(div.innerHTML)
     }
   }
+
   useEffect(() => {
     // initial render
     view.current = new EditorView(editorRef.current, {
