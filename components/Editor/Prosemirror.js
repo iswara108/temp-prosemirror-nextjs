@@ -1,10 +1,8 @@
 import React, {
   useEffect,
   useRef,
-  useState,
   useImperativeHandle,
-  forwardRef,
-  useCallback
+  forwardRef
 } from 'react'
 import { Decoration, DecorationSet } from 'prosemirror-view'
 import { Schema, DOMParser, DOMSerializer } from 'prosemirror-model'
@@ -18,20 +16,6 @@ import { EditorView } from 'prosemirror-view'
 import { schema, nodes } from 'prosemirror-schema-basic'
 import { exampleSetup } from 'prosemirror-example-setup'
 import applyDevTools from 'prosemirror-dev-tools'
-
-import styled from 'styled-components'
-
-const reactPropsKey = new PluginKey('reactProps')
-
-function reactProps(initialProps) {
-  return new Plugin({
-    key: reactPropsKey,
-    state: {
-      init: () => initialProps,
-      apply: (tr, prev) => tr.getMeta(reactPropsKey) || prev
-    }
-  })
-}
 
 function contentUpdatePlugin(callbackObj) {
   return new Plugin({
@@ -120,7 +104,6 @@ class FootnoteView {
       e.preventDefault()
 
       const startX = e.pageX
-      const startY = e.pageY
 
       const fontSize = getFontSize(outer)
 
@@ -128,7 +111,6 @@ class FootnoteView {
 
       const onMouseMove = e => {
         const currentX = e.pageX
-        const currentY = e.pageY
 
         const diffInPx = currentX - startX
         const diffInEm = diffInPx / fontSize
@@ -229,18 +211,12 @@ function uploadFile(file) {
   })
 }
 
+/* eslint-disable react/prop-types */
 const Prosemirror = forwardRef((props, ref) => {
-  const [editorState, setEditorState] = useState()
-
   const editorRef = useRef()
   const view = useRef(null)
   const contentRef = useRef()
   // const imageUploadRef = useRef()
-
-  const dispatchTr = tx => {
-    const es = EditorState.apply(tx)
-    console.log('es', es, EditorState)
-  }
 
   const updateObj = {
     update(newState) {
@@ -317,7 +293,7 @@ const Prosemirror = forwardRef((props, ref) => {
     view.dispatch(tr)
 
     uploadFile(file).then(
-      url => {
+      () => {
         let pos = findPlaceholder(view.state, id)
         // If the content around the placeholder has been deleted, drop
         // the image
@@ -353,5 +329,6 @@ const Prosemirror = forwardRef((props, ref) => {
     </div>
   )
 })
+/* eslint-enable react/prop-types */
 
 export default Prosemirror

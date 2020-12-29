@@ -7,8 +7,10 @@
     "start": "next start",
     "test-ui": "cypress open",
     "test": "cypress run --config video=false",
+    "lint": "yarn eslint . --ignore-pattern '/cypress/*'",
     "post-update": "yarn upgrade --latest"
   },
+  "pre-commit": "lint",
   "dependencies": {
     "next": "10.0.4",
     "prosemirror-dev-tools": "3.0.2",
@@ -23,6 +25,9 @@
   "keywords": [],
   "description": "",
   "devDependencies": {
-    "cypress": "^6.2.0"
+    "cypress": "^6.2.0",
+    "eslint": "^7.16.0",
+    "eslint-plugin-react": "^7.21.5",
+    "pre-commit": "^1.2.2"
   }
 }

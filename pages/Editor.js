@@ -1,16 +1,7 @@
 import React, { useRef, useState } from 'react'
-
 import styled from 'styled-components'
-
 import Prosemirror from '../components/Editor/Prosemirror'
-
 import { ContainerLayout, Header, Content } from '../components/Container'
-
-// Thank you @iswara108 ,  There are few set of features that I want to implement.
-// 1. Editor has to be a react component
-// 2. After every five words, we have to trigger an auto save function.
-// 3. Insert an image when clicked on the image icon, and the image to be re-sizable.
-// 4.
 
 const ImageUploadWrapper = styled.div`
   display: grid;
@@ -53,35 +44,29 @@ const HeadingInput = styled.input`
   }
 `
 
+/* eslint-disable react/prop-types */
+const UploadChoice = ({ name, source, type, handleChange, handleClick }) => {
+  return (
+    <Choice>
+      <label htmlFor={name}>
+        <img src={source} style={{ width: '30px' }} />
+      </label>
+      <input
+        id={name}
+        type={type}
+        onChange={handleChange}
+        alt={type}
+        onClick={handleClick}
+      />
+    </Choice>
+  )
+}
+/* eslint-enable react/prop-types */
+
 const EditorPage = () => {
-  const imageUploadRef = useRef()
   const prosemirrorRef = useRef()
 
   const [EditorContent, setEditorContent] = useState()
-
-  const UploadChoice = ({
-    name,
-    source,
-    type,
-    handleChange,
-    handleClick,
-    input
-  }) => {
-    return (
-      <Choice>
-        <label htmlFor={name}>
-          <img src={source} style={{ width: '30px' }} />
-        </label>
-        <input
-          id={name}
-          type={type}
-          onChange={handleChange}
-          alt={type}
-          onClick={handleClick}
-        />
-      </Choice>
-    )
-  }
 
   return (
     <ContainerLayout>
@@ -97,7 +82,7 @@ const EditorPage = () => {
             handleChange={e => {
               prosemirrorRef.current.imageUploadChange(e)
             }}
-            onClick={e => {
+            onClick={() => {
               prosemirrorRef.current.imageUploadClick
             }}
             input
